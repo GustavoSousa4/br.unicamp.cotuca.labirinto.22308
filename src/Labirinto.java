@@ -32,10 +32,6 @@ public class Labirinto{
             throw new Exception("Erro ao recuperar linha, valor invalido");
         if(coluna < 0)
             throw new Exception("Erro ao recuperar coluna, valor invalido");
-        if(linha > this.getAltura())
-            throw new Exception("Número de linhas superior ao do labirinto");
-        if(coluna > this.getLargura())
-            throw new Exception("Número de colunas superior ao do labirinto");
         return this.matriz[linha][coluna];
     }
     public void setChar(int linha, int coluna, Character elemento) throws Exception{
@@ -43,11 +39,7 @@ public class Labirinto{
         if(linha < 0)
             throw new Exception("Valor de linha de setChar invalido");
         if(coluna < 0)
-            throw new Exception("Valor de coluna de setChar invalido");
-        if(linha > this.getAltura())
-            throw new Exception("Número de linhas superior ao do labirinto");
-        if(coluna > this.getLargura())
-            throw new Exception("Número de colunas superior ao do labirinto");    
+            throw new Exception("Valor de coluna de setChar invalido");   
         this.matriz[linha][coluna] = elemento;
     }
     
@@ -58,7 +50,7 @@ public class Labirinto{
         byte e = 0; 
         if(this.getCharPosicao(0, 0) == 'E'||this.getCharPosicao(this.getAltura() - 1, 0) == 'E' ||
            this.getCharPosicao(0, this.getAltura()-1) == 'E'||this.getCharPosicao(this.getAltura() - 1, this.getLargura()-1 ) == 'E')
-                throw new Exception("Entada localizada em alguma das pontas");
+                throw new Exception("Entrada localizada em alguma das pontas");
 
             for(int i = 0; i < this.getAltura(); i++){
                 for(int j = 0; j < this.getLargura(); j++){
@@ -74,7 +66,7 @@ public class Labirinto{
             }
             if(e>1)
                 throw new Exception("A quantidade de entradas é superior a 1");
-            if(e<0)
+            if(e==0)
                   throw new Exception("Não foi encontrado nenhuma entrada");
     }
     public void verificadorSaidas()throws Exception{
@@ -126,8 +118,8 @@ public class Labirinto{
         //Método utilizado para verificar se algum caracter é diferente dos pré definidos para completar o labirinto
         for(int i = 0; i < this.getAltura(); i++){
             for(int j = 0; j < this.getLargura(); j++){
-                if(this.getCharPosicao(i, j) != 'E' || this.getCharPosicao(i, j) != 'S' ||
-                   this.getCharPosicao(i, j) != '#' || this.getCharPosicao(i, j) != '*' ||
+                if(this.getCharPosicao(i, j) != 'E' && this.getCharPosicao(i, j) != 'S' &&
+                   this.getCharPosicao(i, j) != '#' && this.getCharPosicao(i, j) != '*' &&
                    this.getCharPosicao(i, j) != ' ')
                    throw new Exception("Caracter inválido para o labirinto");
             }
@@ -155,10 +147,10 @@ public class Labirinto{
             }
             ret += "\n";
         }
-        ret += "\n" + "Altura(Y): " + this.ALTURA + "\n" + "Largura(X): " + this.LARGURA;
+        /*ret += "\n" + "Altura(Y): " + this.ALTURA + "\n" + "Largura(X): " + this.LARGURA;
         ret += "\n" + "Fila: " + this.fila.toString();
         ret += "\n" + "Caminho: " + this.caminho.toString();
-        ret += "\n" + "Possibilidade: " + this.possibilidade.toString();
+        ret += "\n" + "Possibilidade: " + this.possibilidade.toString();*/
         return ret;
     }
     @Override
