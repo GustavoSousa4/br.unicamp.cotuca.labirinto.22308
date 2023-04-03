@@ -1,17 +1,20 @@
 import java.lang.reflect.Method;
 
-public class Pilha <X>{
-
+public class Fila <X> 	
+{
     private Object[] elemento;
-    private int ultimo = -1;
-    private int capacidade;
+    private int ultimo= -1;
+    private int capacidadeInicial;
 
-    public Pilha(int tamanho) throws Exception {
-        if(tamanho <= 0)
-            throw new Exception("Tamanho invalido");
-        this.elemento = new Object [tamanho];
-        this.capacidade = tamanho;
+    public Fila (int tamanho) throws Exception
+    {
+        if (tamanho<=0)
+            throw new Exception ("Tamanho invalido");
+
+        this.elemento=new Object [tamanho];
+        this.capacidadeInicial=tamanho;
     }
+
     private void redimensioneSe(float porct)
     {
         Object[] novo = new Object[(int)Math.ceil(this.elemento.length*porct)];
@@ -24,7 +27,7 @@ public class Pilha <X>{
         this.elemento = novo;
     }
 
-    public void guardeItem (X x) throws Exception
+    public void guardeUmItem (X x) throws Exception
     {
         if (x==null)
             throw new Exception ("Falta o que guardar");
@@ -59,8 +62,17 @@ public class Pilha <X>{
         if (this.ultimo==-1)
             throw new Exception ("Nada a remover");
 
-        this.elemento[this.ultimo] = null;
+        for(int i = 0; i <  this.elemento.length; i++){
+            if(i == this.elemento.length-1)
+                this.elemento[i] = null;
+            else
+                this.elemento[i] = this.elemento[i+1]; 
+            System.out.println(this.elemento[i]);
+        }
         this.ultimo--;
+
+        if (this.elemento.length>this.capacidadeInicial && this.ultimo<=Math.round(this.elemento.length*0.25F))
+            this.redimensioneSe (0.5F);
     }
 
     public boolean isCheia ()
@@ -90,7 +102,7 @@ public class Pilha <X>{
 			Class<?>[] tipoDosParms = null;
 			Method metodo = classe.getMethod("clone", tipoDosParms);
 			Object[] parms = null;
-			ret = (X)metodo.invoke(x, parms);
+			ret = (X) metodo.invoke(classe, parms);
         }
         catch(Exception erro)
         {}
@@ -98,7 +110,7 @@ public class Pilha <X>{
         return ret;
     }
 
-    public Pilha(Pilha<X> modelo) throws Exception
+    public Fila(Fila<X> modelo) throws Exception
     {
         if(modelo == null)
             throw new Exception("modelo ausente");
@@ -108,16 +120,17 @@ public class Pilha <X>{
         this.elemento = new Object[modelo.elemento.length];
 
         for(int i=0 ; i<modelo.elemento.length ; i++)
-            this.elemento[i] = modelo.elemento[i]  ;
+            this.elemento[i] = modelo.elemento[i];
     }
 
+    @Override
     public Object clone()
     {
-        Pilha<X> ret = null;
+        Fila<X> ret = null;
 
         try
         {
-            ret  = new Pilha(this);
+            ret  = new Fila(this);
         }
         catch(Exception erro)
         {}
@@ -128,14 +141,15 @@ public class Pilha <X>{
     @Override
     public String toString()
     {
-        String ret = "";
+        String ret = this.elemento.length + " positions";
         
         if (this.ultimo!=-1)
-            ret += ""+this.elemento[this.ultimo];
+            ret += ", sendo o ultimo "+this.elemento[this.ultimo];
             
         return ret;
     }
 
+    @Override
     public boolean equals (Object obj)
     {
         if(this==obj)
@@ -147,26 +161,26 @@ public class Pilha <X>{
         if(this.getClass()!=obj.getClass())
             return false;
 
-        Pilha<X> pil = (Pilha<X>) obj;
+        Fila<X> fil = (Fila<X>) obj;
 
-        if(this.ultimo!=pil.ultimo)
+        if(this.ultimo!=fil.ultimo)
             return false;
 
         for(int i=0 ; i<this.ultimo;i++)
-            if(!this.elemento[i].equals (pil.elemento[i]))
+            if(!this.elemento[i].equals (fil.elemento[i]))
                 return false;
 
         return true;
     }
 
+    @Override
     public int hashCode ()
     {
         int ret=7;
-
-        ret = ret*11 + Integer.valueOf(this.ultimo).hashCode();
+        ret = ret * 11 + Integer.valueOf(this.ultimo).hashCode();
 
         for (int i=0; i<this.ultimo; i++)
-            ret = ret*11+ this.elemento[i].hashCode();
+            ret = ret * 11 + this.elemento[i].hashCode();
 
         if (ret<0)
             ret=-ret;

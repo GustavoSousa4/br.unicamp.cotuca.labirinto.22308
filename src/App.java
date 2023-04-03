@@ -4,7 +4,7 @@ public class App {
     public static void main(String[] args){
         try
         {
-            File file = new File("src/Labirintos/LabirintosCorretosParaTeste/Teste1.txt");
+            File file = new File("src/Labirintos/LabirintosCorretosParaTeste/Teste6.txt");
             LeitorDeArquivo leitorDeArquivo = new LeitorDeArquivo(file);
             Labirinto lab = new Labirinto(leitorDeArquivo.getLimites(), leitorDeArquivo.getLimites());
     
@@ -15,13 +15,20 @@ public class App {
                      lab.setChar(linha, coluna, leitorDeArquivo.getCharNaColuna(coluna));
                 }
             }
-            lab.isVazioEmBordas();
+
             lab.verificadorEntrada();
             lab.verificadorSaidas();
+            lab.isVazioEmBordas();
             lab.caracterEstranho();
+            for(;;) {
+                if(!lab.getAtual().equals(lab.verificadorSaidas())) {
+                    lab.adjacente(lab.getAtual());
+                    lab.mover();
+                }
+                else break;
+            }
             System.out.println(lab.toString());
-            System.out.println("Retorno: " + lab.getCharPosicao(0,10));
-            lab.toString();
+            
         }
         catch(Exception erro){
             System.err.println(erro);

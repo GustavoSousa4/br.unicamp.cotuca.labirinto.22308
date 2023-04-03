@@ -62,8 +62,10 @@ public class Labirinto{
 
             for(int i = 0; i < this.getAltura(); i++){
                 for(int j = 0; j < this.getLargura(); j++){
-                    if(this.getCharPosicao(i, j) == 'E')
+                    if(this.getCharPosicao(i, j) == 'E'){
                         e++;            
+                        this.caminho.guardeItem(new Coordenada(i,j));
+                    }
                 }
             }
             for(int i = 1; i < this.getAltura()-2; i++){
@@ -77,17 +79,20 @@ public class Labirinto{
             if(e<0)
                   throw new Exception("Não foi encontrado nenhuma entrada");
     }
-    public void verificadorSaidas()throws Exception{
+    public Coordenada verificadorSaidas()throws Exception{
         /*Verificador para analisar se a saída do labirinto não está nas pontas ou se o número de saídas é superior a "1" ou igual a "0".
           Analisa também se a saída está inacessível*/
         byte s = 0;
+        Coordenada saida = new Coordenada(0,0);
         if(this.getCharPosicao(0, 0) == 'S'||this.getCharPosicao(this.getAltura() - 1, 0) == 'S' ||
            this.getCharPosicao(0, this.getAltura()-1) == 'S'||this.getCharPosicao(this.getAltura() - 1, this.getLargura()-1 ) == 'S')
             throw new Exception("Saida localizada em alguma das pontas");
         for(int i = 0; i < this.getAltura(); i++){
             for(int j = 0; j < this.getLargura(); j++){
-                if(this.getCharPosicao(i, j) == 'S')
+                if(this.getCharPosicao(i, j) == 'S'){
                     s++;
+                    saida = new Coordenada(i, j);
+                }
             }
         }
         for(int i = 1; i < this.getAltura()-2; i++){
@@ -100,6 +105,7 @@ public class Labirinto{
             throw new Exception("Não foi encontrado nenhuma saida");
         if(s>1)
             throw new Exception("A quantidade de saidas é superior a 1");
+        return saida;
     }
     
     public void isVazioEmBordas()throws Exception{
@@ -126,26 +132,69 @@ public class Labirinto{
         //Método utilizado para verificar se algum caracter é diferente dos pré definidos para completar o labirinto
         for(int i = 0; i < this.getAltura(); i++){
             for(int j = 0; j < this.getLargura(); j++){
-                if(this.getCharPosicao(i, j) != 'E' || this.getCharPosicao(i, j) != 'S' ||
-                   this.getCharPosicao(i, j) != '#' || this.getCharPosicao(i, j) != '*' ||
-                   this.getCharPosicao(i, j) != ' ')
+                if(this.getCharPosicao(i, j) != 'E' && this.getCharPosicao(i, j) != 'S' &&
+                   this.getCharPosicao(i, j) != '#' && this.getCharPosicao(i, j) != '*' &&
+                   this.getCharPosicao(i, j) != ' ' && this.getCharPosicao(i, i)!= '╚')
                    throw new Exception("Caracter inválido para o labirinto");
             }
         }
     }
     //verificar posições adjacentes(Coordenada atual): se o caractere é um espaço vazio,
     //se posição adjascente já foi percorrida e não foi o ultimo elemento de "caminho"
-    /*public void adjacente (Coordenada atual)throws Exception{
-        for(int i = 0; i < atual.getLinha();  i++){
-            for(int j = 0; j < atual.getColuna(); j++){
-                if(this.getCharPosicao(i, j) == ' '){}
-                    this.fila;
+    public void adjacente (Coordenada atual)throws Exception{
+        Coordenada w;
+        this.fila = new Fila<Coordenada>(3);
+        if (atual.getLinha()-1 >= 0 ) {
+            w = new Coordenada(atual.getLinha()-1,atual.getColuna());
+            if(this.matriz[w.getLinha()][w.getColuna()] == ' ' || this.matriz[w.getLinha()][w.getColuna()] == 'S' && !this.caminho.recupereUmItem().equals(w)){
+    
+                this.fila.guardeUmItem(w);
+            }
+        } 
+        if (atual.getColuna()-1 >= 0 ){
+            w = new Coordenada(atual.getLinha(), atual.getColuna() -1);
+            if(this.matriz[w.getLinha()][w.getColuna()] == ' ' || this.matriz[w.getLinha()][w.getColuna()] == 'S' && !this.caminho.recupereUmItem().equals(w)){
+                this.fila.guardeUmItem(w);            
+            }
         }
-    }*/
+        if(atual.getLinha() + 1 <= this.getAltura()-1){
+            w = new Coordenada(atual.getLinha()+1, atual.getColuna());
+            if(this.matriz[w.getLinha()][w.getColuna()] == ' '|| this.matriz[w.getLinha()][w.getColuna()] == 'S' && !this.caminho.recupereUmItem().equals(w)){
+                this.fila.guardeUmItem(w); 
+            }
+        
+        }
+        if(atual.getColuna() + 1 <= this.getLargura()-1){
+            w = new Coordenada(atual.getLinha(), atual.getColuna()+1);
+            if(this.matriz[w.getLinha()][w.getColuna()] == ' '|| this.matriz[w.getLinha()][w.getColuna()] == 'S' && !this.caminho.recupereUmItem().equals(w)){
+                this.fila.guardeUmItem(w);
+            }
+        }
+
+    }
+    public Coordenada getAtual()throws Exception{
+        return this.caminho.recupereUmItem();
+    }
+    public void mover() throws Exception{
+        if (!this.fila.isVazia()) {
+            this.caminho.guardeItem(this.fila.recupereUmItem());
+            this.fila.removaUmItem();
+            this.possibilidade.guardeItem(fila);
+            if (this.getCharPosicao(this.caminho.recupereUmItem().getLinha(), this.caminho.recupereUmItem().getColuna()) != 'S')
+                this.setChar(this.caminho.recupereUmItem().getLinha(), this.caminho.recupereUmItem().getColuna(), '*');
+        }
+        else this.voltar();
+    }
     //método mover(): adicionar ao caminho a 1a posição de fila, remover essa posição de fila,
     //adicionar fila em possibilidades, usar setChar para colocar * na posição passada
 
     //roolback() verificar se o burro bate na parede
+    public void voltar() throws Exception{
+        this.setChar(this.caminho.recupereUmItem().getLinha(), this.caminho.recupereUmItem().getColuna(), '.');
+        this.caminho.removaUmItem();
+        this.fila = this.possibilidade.recupereUmItem();
+        this.possibilidade.removaUmItem();
+    }
     @Override
     public String toString(){
         String ret = "";
@@ -155,10 +204,6 @@ public class Labirinto{
             }
             ret += "\n";
         }
-        ret += "\n" + "Altura(Y): " + this.ALTURA + "\n" + "Largura(X): " + this.LARGURA;
-        ret += "\n" + "Fila: " + this.fila.toString();
-        ret += "\n" + "Caminho: " + this.caminho.toString();
-        ret += "\n" + "Possibilidade: " + this.possibilidade.toString();
         return ret;
     }
     @Override
