@@ -10,7 +10,6 @@ public class LeitorDeArquivo {
     }
 
     public char[] leiaLinha() throws Exception{
-
         this.linha = this.bufferedReader.readLine().toCharArray();
         return this.linha;
     }
@@ -21,7 +20,12 @@ public class LeitorDeArquivo {
         return this.linha[coluna];
     }
     public int getLimites() throws Exception{
-        return Integer.parseInt(bufferedReader.readLine());
+        try{
+            return Integer.parseInt(bufferedReader.readLine());
+        }
+        catch (Exception e){
+            throw new Exception("Não foi passado o número de limites do labirinto");
+        }
     }
 
     @Override

@@ -23,7 +23,7 @@ public class Coordenada {
 
     @Override
     public String toString(){
-        return "Linha(Y): " + this.LINHA + "\n" + "Colunha(X): " + this.COLUNA;
+        return this.LINHA + ","  + this.COLUNA;
     }
 
     @Override

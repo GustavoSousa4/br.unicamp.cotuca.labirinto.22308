@@ -40,10 +40,11 @@ public class Pilha <X>{
             this.elemento[this.ultimo] = x;
     }
 
+    @SuppressWarnings("unchecked")
     public X recupereUmItem () throws Exception
     {
         if (this.ultimo==-1)
-            throw new Exception ("Nada a recuperar");
+            throw new Exception ("Nada a recuperar Pilha");
 
         X ret=null;
         if (this.elemento[this.ultimo] instanceof Cloneable)
@@ -79,6 +80,7 @@ public class Pilha <X>{
         return false;
     }
 
+    @SuppressWarnings("unchecked")
     private X meuCloneDeX(X x)
     {
 
@@ -110,7 +112,7 @@ public class Pilha <X>{
         for(int i=0 ; i<modelo.elemento.length ; i++)
             this.elemento[i] = modelo.elemento[i]  ;
     }
-
+    @SuppressWarnings("unchecked")
     public Object clone()
     {
         Pilha<X> ret = null;
@@ -129,13 +131,14 @@ public class Pilha <X>{
     public String toString()
     {
         String ret = "";
+        if(this.ultimo <= 0)
+            ret = "Pilha vazia";
+        ret = "O último elemento é: "+this.elemento[ultimo];
         
-        if (this.ultimo!=-1)
-            ret += ""+this.elemento[this.ultimo];
-            
         return ret;
     }
-
+    @Override
+    @SuppressWarnings("unchecked")
     public boolean equals (Object obj)
     {
         if(this==obj)
@@ -152,13 +155,13 @@ public class Pilha <X>{
         if(this.ultimo!=pil.ultimo)
             return false;
 
-        for(int i=0 ; i<this.ultimo;i++)
+        for(int i=0 ; i <this.ultimo;i++)
             if(!this.elemento[i].equals (pil.elemento[i]))
                 return false;
 
         return true;
     }
-
+    @Override
     public int hashCode ()
     {
         int ret=7;

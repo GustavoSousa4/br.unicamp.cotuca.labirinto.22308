@@ -42,11 +42,12 @@ public class Fila <X>
         else
             this.elemento[this.ultimo] = x;
     }
-
+    
+    @SuppressWarnings("unchecked")
     public X recupereUmItem () throws Exception
     {
         if (this.ultimo==-1)
-            throw new Exception ("Nada a recuperar");
+            throw new Exception ("Nada a recuperar Fila");
 
         X ret=null;
         if (this.elemento[this.ultimo] instanceof Cloneable)
@@ -67,7 +68,6 @@ public class Fila <X>
                 this.elemento[i] = null;
             else
                 this.elemento[i] = this.elemento[i+1]; 
-            System.out.println(this.elemento[i]);
         }
         this.ultimo--;
 
@@ -91,6 +91,7 @@ public class Fila <X>
         return false;
     }
 
+    @SuppressWarnings("unchecked")
     private X meuCloneDeX(X x)
     {
 
@@ -124,6 +125,7 @@ public class Fila <X>
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Object clone()
     {
         Fila<X> ret = null;
@@ -141,14 +143,13 @@ public class Fila <X>
     @Override
     public String toString()
     {
-        String ret = this.elemento.length + " positions";
-        
-        if (this.ultimo!=-1)
-            ret += ", sendo o ultimo "+this.elemento[this.ultimo];
-            
+        String ret = "";
+            for(int i = 0; i < this.ultimo; i++){
+                ret += "("+this.elemento[i]+")";
+            }
         return ret;
     }
-
+    @SuppressWarnings("unchecked")
     @Override
     public boolean equals (Object obj)
     {

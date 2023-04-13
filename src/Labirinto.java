@@ -2,9 +2,10 @@ public class Labirinto{
     private char[][] matriz; 
     private final int ALTURA;
     private final int LARGURA;
-    private Pilha<Coordenada> caminho;
+    public Pilha<Coordenada> caminho;
     private Pilha<Fila<Coordenada>> possibilidade;
     private Fila<Coordenada> fila;
+    private Pilha<Coordenada> inverso;
 
     public Labirinto(int altura, int largura) throws Exception {
         if(altura < 0)
@@ -17,6 +18,7 @@ public class Labirinto{
         this.caminho = new Pilha<Coordenada>(this.ALTURA*this.LARGURA);
         this.fila = new Fila<Coordenada>(3);
         this.possibilidade = new Pilha<Fila<Coordenada>>(this.ALTURA*this.LARGURA);
+        this.inverso = new Pilha<Coordenada>(this.ALTURA*this.LARGURA);
     }
     
     public int getAltura() {
@@ -32,10 +34,6 @@ public class Labirinto{
             throw new Exception("Erro ao recuperar linha, valor invalido");
         if(coluna < 0)
             throw new Exception("Erro ao recuperar coluna, valor invalido");
-        if(linha > this.getAltura())
-            throw new Exception("Número de linhas superior ao do labirinto");
-        if(coluna > this.getLargura())
-            throw new Exception("Número de colunas superior ao do labirinto");
         return this.matriz[linha][coluna];
     }
     public void setChar(int linha, int coluna, Character elemento) throws Exception{
@@ -71,13 +69,13 @@ public class Labirinto{
             for(int i = 1; i < this.getAltura()-2; i++){
                 for(int j = 1; j < this.getLargura()-2; j++){
                     if(this.getCharPosicao(i, j) == 'E')
-                        throw new Exception("Entrada localizada dentro do labirinto");            
+                    throw new Exception("Entrada localizada dentro do labirinto");            
                 }
             }
+            if(e==0)
+                  throw new Exception("Não foi encontrado nenhuma entrada");
             if(e>1)
                 throw new Exception("A quantidade de entradas é superior a 1");
-            if(e<0)
-                  throw new Exception("Não foi encontrado nenhuma entrada");
     }
     public Coordenada verificadorSaidas()throws Exception{
         /*Verificador para analisar se a saída do labirinto não está nas pontas ou se o número de saídas é superior a "1" ou igual a "0".
@@ -134,7 +132,7 @@ public class Labirinto{
             for(int j = 0; j < this.getLargura(); j++){
                 if(this.getCharPosicao(i, j) != 'E' && this.getCharPosicao(i, j) != 'S' &&
                    this.getCharPosicao(i, j) != '#' && this.getCharPosicao(i, j) != '*' &&
-                   this.getCharPosicao(i, j) != ' ' && this.getCharPosicao(i, i)!= '╚')
+                   this.getCharPosicao(i, j) != ' ')
                    throw new Exception("Caracter inválido para o labirinto");
             }
         }
@@ -176,24 +174,40 @@ public class Labirinto{
         return this.caminho.recupereUmItem();
     }
     public void mover() throws Exception{
+        //método mover(): adicionar ao caminho a 1a posição de fila, remover essa posição de fila,
+        //adicionar fila em possibilidades, usar setChar para colocar * na posição passada
         if (!this.fila.isVazia()) {
             this.caminho.guardeItem(this.fila.recupereUmItem());
             this.fila.removaUmItem();
             this.possibilidade.guardeItem(fila);
             if (this.getCharPosicao(this.caminho.recupereUmItem().getLinha(), this.caminho.recupereUmItem().getColuna()) != 'S')
                 this.setChar(this.caminho.recupereUmItem().getLinha(), this.caminho.recupereUmItem().getColuna(), '*');
+            this.caminho.toString();
         }
         else this.voltar();
     }
-    //método mover(): adicionar ao caminho a 1a posição de fila, remover essa posição de fila,
-    //adicionar fila em possibilidades, usar setChar para colocar * na posição passada
 
     //roolback() verificar se o burro bate na parede
     public void voltar() throws Exception{
         this.setChar(this.caminho.recupereUmItem().getLinha(), this.caminho.recupereUmItem().getColuna(), '.');
         this.caminho.removaUmItem();
+        this.semCaminhoEparaS();
         this.fila = this.possibilidade.recupereUmItem();
         this.possibilidade.removaUmItem();
+    }
+    public void semCaminhoEparaS()throws Exception{
+        if(this.caminho.isVazia())
+            throw new Exception("Sem caminho de E para S");
+    }
+    public String inverteCaminho()throws Exception{
+        //inverte caminho e colocar em inverso
+        StringBuilder mapa = new StringBuilder(); 
+        while (!this.caminho.isVazia()) {
+            this.inverso.guardeItem(this.caminho.recupereUmItem());
+            mapa.append("("+this.inverso.recupereUmItem() + ") ");
+            this.caminho.removaUmItem();
+        }
+        return mapa.toString();
     }
     @Override
     public String toString(){
